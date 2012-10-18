@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE ejb-jar PUBLIC 
+'-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN' 
+'http://java.sun.com/dtd/ejb-jar_2_0.dtd'>
+
+<ejb-jar>
+  <enterprise-beans>
+    <session>
+      <ejb-name>Teller</ejb-name>
+      <home>com.hywy.samples.ejb20.session.stateless.TellerHome</home>
+      <remote>com.hywy.samples.ejb20.session.stateless.Teller</remote>
+      <ejb-class>com.hywy.samples.ejb20.session.stateless.TellerBean</ejb-class>
+      <session-type>Stateless</session-type>
+      <transaction-type>Container</transaction-type>
+      <env-entry>
+        <env-entry-name>transactionLimit_</env-entry-name>
+	<env-entry-type>java.lang.Integer </env-entry-type>
+	<env-entry-value>5000</env-entry-value>
+      </env-entry>
+    </session>
+  </enterprise-beans>
+  <assembly-descriptor>
+    <container-transaction>
+      <method>
+        <ejb-name>Teller</ejb-name>
+	<method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+  </assembly-descriptor>
+</ejb-jar>

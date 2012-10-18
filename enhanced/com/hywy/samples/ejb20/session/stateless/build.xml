@@ -1,0 +1,142 @@
+<project name="ejb20-basic-statelessSession" default="all" basedir=".">
+
+  <!-- set global properties for this build -->
+  <property environment="env"/>
+  <property file="../../../../../../pejsamples.properties"/>
+  <property name="build.compiler" value="${JAVAC}"/>
+  <property name="source" value="."/>
+  <property name="build" value="${source}/build"/>
+  <property name="dist" value="${source}/dist"/>
+  <property name="enhanced_bank" value="../../../../../../com/hywy/samples/bank"/>
+
+  <target name="all" depends="clean, init, compile_ejb, jar_ejb, ejbc, ear_app,
+    compile_webapp, compile_client"/>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile
+    and copy the deployment descriptors into it-->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build}/META-INF"/>
+    <mkdir dir="${dist}"/>
+    <copy todir="${build}/META-INF">
+      <fileset dir="${source}">
+        <include name="ejb-jar.xml"/>
+        <include name="weblogic-ejb-jar.xml"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- Compile ejb classes into the build directory (jar preparation) -->
+  <target name="compile_ejb">
+    <javac srcdir="${source}" destdir="${build}">
+       <classpath>
+          <pathelement location="../../../../../../bank.jar">
+          </pathelement>
+       </classpath>
+       <include name="Teller.java">
+       </include>       
+       <include name="TellerHome.java">
+       </include>       
+       <include name="TellerBean.java">
+       </include>       
+    </javac>
+    <mkdir dir="${build}/com/hywy/samples/bank"/>
+    <copy todir="${build}/com/hywy/samples/bank">
+      <fileset dir="${enhanced_bank}">
+        <include name="Account.class"/>
+        <include name="Teller.class"/>
+        <include name="Checking.class"/>
+        <include name="Savings.class"/>
+        <include name="Account.jdo"/>
+        <include name="Checking.jdo"/>
+        <include name="Savings.jdo"/>
+        <include name="Account.map"/>
+        <include name="Checking.map"/>
+        <include name="Savings.map"/>
+      </fileset>
+    </copy>  
+    </target>
+
+  <!-- Make a standard ejb jar file, including XML deployment descriptors -->
+  <target name="jar_ejb" depends="compile_ejb">
+    <jar jarfile="${dist}/teller_session.jar"
+      basedir="${build}">
+    </jar>
+  </target>
+
+  <!-- Run ejbc to create the deployable jar file -->
+  <target name="ejbc" depends="jar_ejb">
+    <java classname="weblogic.ejbc" fork="yes" failonerror="yes">
+      <sysproperty key="weblogic.home" value="${WL_HOME}/server"/>
+      <arg line="-compiler javac ${dist}/teller_session.jar ${dist}/teller_session.jar"/>
+      <classpath>
+        <pathelement path="${CLASSPATH}">
+        </pathelement>
+        <pathelement location="C:/PEJ/lib/jdo.jar">
+        </pathelement>
+          <pathelement location="../../../../../../bank.jar">
+          </pathelement>
+        <pathelement location="C:\PEJ/lib/pej.jar">
+        </pathelement>
+      </classpath>
+    </java>
+  </target>
+
+  <!-- Put the ejb into an ear, to be deployed from the ${APPLICATIONS} dir -->
+  <target name="ear_app" depends="jar_ejb">
+    <ear earfile="${APPLICATIONS}/teller_session.ear" appxml="${source}/application.xml">
+      <fileset dir="${dist}">
+         <include name="teller_session.jar">
+         </include>
+      </fileset>
+    </ear>
+  </target>
+
+  <!-- Compile handler class into WEB-INF/classes directory of the Examples Web
+    App.  This ensures that the EJB can be accessed by JSPs of the Examples Web
+    App-->
+  <target name="compile_webapp">
+    <javac srcdir="${source}" destdir="${EX_WEBAPP_CLASSES}">
+       <classpath>
+        <pathelement location="C:\PEJ/lib/pej.jar">
+        </pathelement>
+       </classpath>
+         <include name="Teller.java">
+         </include>
+         <include name="TellerHome.java">
+         </include>
+    </javac>
+  </target>
+
+  <!-- Compile EJB interfaces & client app into the clientclasses directory -->
+  <target name="compile_client">
+    <javac srcdir="${source}"
+      destdir="${CLIENT_CLASSES}">
+         <include name="Teller.java">
+         </include>
+         <include name="TellerHome.java">
+         </include>
+         <include name="Client.java">
+         </include>
+    </javac>
+  </target>
+
+  <target name="clean">
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+  <!-- Run the example -->
+  <target name="run">
+    <java classname="com.hywy.samples.ejb20.session.stateless.Client" fork="yes" failonerror="true">
+      <arg value="t3://localhost:${PORT}"/>
+      <classpath>
+        <pathelement path="${CLASSPATH}"/>
+        <pathelement path="../../../../../../bank.jar"/>
+      </classpath>
+    </java>
+  </target>
+
+</project>

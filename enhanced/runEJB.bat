@@ -1,0 +1,1 @@
+%JAVA_HOME%/bin/java -classpath .;C:/PEJ/lib/j2ee.jar;C:\bea\weblogic700b\server\lib\weblogic.jar;C:\PEJ\lib\pej.jar;C:\PEJ\lib\jdo.jar com.hywy.samples.ejb20.session.stateless.Client "t3://localhost:7001/TellerHome"
