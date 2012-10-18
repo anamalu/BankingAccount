@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- ****************************************** --><!-- **             JDO XML File             ** --><!-- ** Created Thu May 23 22:23:20 EDT 2002 ** --><!-- ****************************************** --><jdo><package name="com.hywy.samples.bank"><class identity-type="datastore" name="Savings" persistence-capable-superclass="com.hywy.samples.bank.Account"><extension key="isSCO" value="false" vendor-name="HYWY"/><field default-fetch-group="true" name="interestRate_" persistence-modifier="persistent"/></class></package></jdo>
